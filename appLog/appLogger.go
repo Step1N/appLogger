@@ -8,28 +8,25 @@ import (
 
 type AppLogger struct {
 }
-type AppError struct {
+type LogError struct {
 	*AppLogger
 	error
 }
 
-func (app *AppLogger) WithFile(file string) AppError {
+func (app *AppLogger) WithFile(file string) LogError {
 	logFile, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE, 0755)
-	if err != nil {
-		log.Infof("Error while open file %v", err)
-	}
 	log.SetOutput(logFile)
-	return AppError{app, nil}
+	return LogError{app, err}
 }
 
-func (app *AppLogger) WithJSON() AppError {
+func (app *AppLogger) WithJSON() LogError {
 	log.SetFormatter(&log.JSONFormatter{})
 	log.SetLevel(log.InfoLevel)
-	return AppError{app, nil}
+	return LogError{app, nil}
 }
 
-func (app *AppLogger) WithText() AppError {
+func (app *AppLogger) WithText() LogError {
 	log.SetFormatter(&log.TextFormatter{})
 	log.SetLevel(log.InfoLevel)
-	return AppError{app, nil}
+	return LogError{app, nil}
 }
